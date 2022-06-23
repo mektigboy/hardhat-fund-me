@@ -28,7 +28,7 @@ contract FundMe {
 
     function fund() public payable {
         require(
-            msg.value.getConvertionRate() >= MINIMUM_USD,
+            msg.value.getConvertionRate(priceFeed) >= MINIMUM_USD,
             "Did not send enough!"
         );
         funders.push(msg.sender);
