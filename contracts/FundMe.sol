@@ -8,56 +8,63 @@ error NotOwner();
 contract FundMe {
     using PriceConverter for uint256;
 
-    uint256 public constant MINIMUM_USD = 50 * 1e18;
-    address[] public funders;
-    mapping(address => uint256) public addressToAmountFounded;
-    address public immutable i_owner;
-    AggregatorV3Interface public priceFeed;
-
+    address private immutable owner;
+    address[] private funders;
+    uint256 public constant MINIMUM_USD = 50 * 10**18;
+    mapping(address => uint256) private addressToAmountFunded;
+    AggregatorV3Interface private priceFeed;
+    
     constructor(address priceFeedAddress) {
-        i_owner = msg.sender;
+        owner = msg.sender;
         priceFeed = AggregatorV3Interface(priceFeedAddress);
     }
 
     modifier onlyOwner() {
-        if (msg.sender != i_owner) {
-            revert NotOwner();
-        }
+        if (msg.sender != owner) revert NotOwner();
         _;
     }
 
     function fund() public payable {
         require(
-            msg.value.getConvertionRate(priceFeed) >= MINIMUM_USD,
+            msg.value.getConversionRate(priceFeed) >= MINIMUM_USD,
             "Did not send enough!"
         );
+        addressToAmountFunded[msg.sender] += msg.value;
         funders.push(msg.sender);
-        addressToAmountFounded[msg.sender] += msg.value;
     }
 
-    function withdraw() public onlyOwner {
+    function withdraw() public payable onlyOwner {
         for (
             uint256 funderIndex = 0;
             funderIndex < funders.length;
             funderIndex++
         ) {
             address funder = funders[funderIndex];
-            addressToAmountFounded[funder] = 0;
+            addressToAmountFunded[funder] = 0;
         }
+        funders = new address[](0);
 
-        funders = new address[](0); // Resets funders array.
-
-        (bool callSuccess, ) = payable(msg.sender).call{
-            value: address(this).balance
-        }("");
-        require(callSuccess, "Call failed.");
+        (bool success, ) = owner.call{value: address(this).balance}("");
+        require(success);
     }
 
-    receive() external payable {
-        fund();
+    function getAddressToAmountFunded(address fundingAddress)
+        public
+        view
+        returns (uint256)
+    {
+        return addressToAmountFunded[fundingAddress];
     }
 
-    fallback() external payable {
-        fund();
+    function getFunder(uint256 index) public view returns (address) {
+        return funders[index];
+    }
+
+    function getOwner() public view returns (address) {
+        return owner;
+    }
+
+    function getPriceFeed() public view returns (AggregatorV3Interface) {
+        return priceFeed;
     }
 }
