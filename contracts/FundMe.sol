@@ -13,7 +13,7 @@ contract FundMe {
     uint256 public constant MINIMUM_USD = 50 * 10**18;
     mapping(address => uint256) private addressToAmountFunded;
     AggregatorV3Interface private priceFeed;
-    
+
     constructor(address priceFeedAddress) {
         owner = msg.sender;
         priceFeed = AggregatorV3Interface(priceFeedAddress);
@@ -31,6 +31,7 @@ contract FundMe {
         );
         addressToAmountFunded[msg.sender] += msg.value;
         funders.push(msg.sender);
+        // emit Funded(msg.sender, msg.value);
     }
 
     function withdraw() public payable onlyOwner {
