@@ -4,7 +4,10 @@ pragma solidity ^0.8.15;
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "./PriceConverter.sol";
 
-
+/// @title Funding Contract
+/// @author mektigboy
+/// @notice Create a sample funding contract.
+/// @dev Implements price feeds as out library.
 
 contract FundMe {
     using PriceConverter for uint256;
