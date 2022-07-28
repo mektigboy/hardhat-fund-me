@@ -4,11 +4,12 @@ pragma solidity ^0.8.15;
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "./PriceConverter.sol";
 
+error FundMe__NotOwner();
+
 /// @title Funding Contract
 /// @author mektigboy
 /// @notice Create a sample funding contract.
 /// @dev Implements price feeds as our library.
-
 contract FundMe {
     using PriceConverter for uint256;
 
@@ -18,13 +19,19 @@ contract FundMe {
     mapping(address => uint256) private s_addressToAmountFounded;
     AggregatorV3Interface private s_priceFeed;
 
-    error NotOwner();
-
     modifier onlyOwner() {
         if (msg.sender != i_owner) {
-            revert NotOwner();
+            revert FundMe__NotOwner();
         }
         _;
+    }
+
+    receive() external payable {
+        fund();
+    }
+
+    fallback() external payable {
+        fund();
     }
 
     constructor(address priceFeed) {
@@ -47,13 +54,5 @@ contract FundMe {
         s_funders = new address[](0);
         (bool success,) = i_owner.call{value: address(this).balance}("");
         require(success);
-    }
-
-    receive() external payable {
-        fund();
-    }
-
-    fallback() external payable {
-        fund();
     }
 }
