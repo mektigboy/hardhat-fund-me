@@ -8,64 +8,62 @@ error NotOwner();
 contract FundMe {
     using PriceConverter for uint256;
 
-    address private immutable owner;
-    address[] private funders;
-    uint256 public constant MINIMUM_USD = 50 * 10**18;
-    mapping(address => uint256) private addressToAmountFunded;
-    AggregatorV3Interface private priceFeed;
+    // Keyword <constant> saves more gas.
+    uint256 public constant MINIMUM_USD = 50 * 1e18; // 1 * 10 ** 18
 
-    constructor(address priceFeedAddress) {
-        owner = msg.sender;
-        priceFeed = AggregatorV3Interface(priceFeedAddress);
+    address[] public funders;
+    mapping(address => uint256) public addressToAmountFounded;
+
+    // Keyword <immutable> means you are not going to change the variable.
+    address public immutable i_owner;
+
+    constructor() {
+        i_owner = msg.sender;
     }
 
     modifier onlyOwner() {
-        if (msg.sender != owner) revert NotOwner();
+        // require(msg.sender == i_owner, "Sender is not i_owner.");
+        if (msg.sender != i_owner) {
+            revert NotOwner();
+        }
         _;
     }
 
     function fund() public payable {
-        require(
-            msg.value.getConversionRate(priceFeed) >= MINIMUM_USD,
-            "Did not send enough!"
-        );
-        addressToAmountFunded[msg.sender] += msg.value;
+        require(msg.value.getConvertionRate() >= MINIMUM_USD, "Did not send enough!");
         funders.push(msg.sender);
-        // emit Funded(msg.sender, msg.value);
+        addressToAmountFounded[msg.sender] += msg.value;
     }
 
-    function withdraw() public payable onlyOwner {
-        for (
-            uint256 funderIndex = 0;
-            funderIndex < funders.length;
-            funderIndex++
-        ) {
+    function withdraw() public onlyOwner {
+        for (uint256 funderIndex = 0; funderIndex < funders.length; funderIndex++) {
             address funder = funders[funderIndex];
-            addressToAmountFunded[funder] = 0;
+            addressToAmountFounded[funder] = 0;
         }
-        funders = new address[](0);
 
-        (bool success, ) = owner.call{value: address(this).balance}("");
-        require(success);
+        // Reset <funders> array.
+        funders = new address[](0); // New array of addresses with 0 elements.
+
+        // Transfer:
+        // Where msg.sender = address.
+        // And payable(msg.sender) = payable address.
+        // payable(msg.sender).transfer(address(this).balance);
+
+        // Send:
+        // bool sendSuccess = payable(msg.sender).send(address(this).balance);
+        // require(sendSuccess, "Send failed.");
+
+        // Call:
+        // Returns 2 variables.
+        (bool callSuccess,) = payable(msg.sender).call{value: address(this).balance}("");
+        require(callSuccess, "Call failed.");
     }
 
-    function getAddressToAmountFunded(address fundingAddress)
-        public
-        view
-        returns (uint256)
-    {
-        return addressToAmountFunded[fundingAddress];
+    receive() external payable {
+        fund();
     }
 
-    function getFunder(uint256 index) public view returns (address) {
-        return funders[index];
-    }
-
-    function getOwner() public view returns (address) {
-        return owner;
-    }
-
-    function getPriceFeed() public view returns (AggregatorV3Interface) {
-        return priceFeed;
+    fallback() external payable {
+        fund();
     }
 }
