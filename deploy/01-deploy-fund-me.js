@@ -1,5 +1,8 @@
 const { network } = require("hardhat");
-const { networkConfig, developmentChains } = require("../helper-hardhat-config");
+const {
+    networkConfig,
+    developmentChains,
+} = require("../helper-hardhat-config");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments;
@@ -8,7 +11,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     let ethUsdPriceFeedAddress;
 
-    if (developmentChains.includes(network.name)){
+    if (developmentChains.includes(network.name)) {
         const ethUsdAggregator = await deployments.get("MockV3Aggregator");
         ethUsdPriceFeedAddress = ethUsdAggregator.address;
     } else {
