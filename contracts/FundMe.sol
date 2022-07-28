@@ -16,7 +16,7 @@ contract FundMe {
     address public immutable i_owner;
     address[] private s_funders;
     mapping(address => uint256) private s_addressToAmountFounded;
-    AggregatorV3Interface private priceFeed;
+    AggregatorV3Interface private s_priceFeed;
 
     error NotOwner();
 
@@ -27,16 +27,16 @@ contract FundMe {
         _;
     }
 
-    constructor(address priceFeedAddress) {
+    constructor(address priceFeed) {
         i_owner = msg.sender;
-        priceFeed = AggregatorV3Interface(priceFeedAddress);
+        s_priceFeed = AggregatorV3Interface(priceFeed);
     }
 
+    /// @notice Funds our contract based on ETH/USD.
     function fund() public payable {
-        require(msg.value.getConvertionRate(priceFeed) >= MINIMUM_USD, "Did not send enough!");
+        require(msg.value.getConvertionRate(s_priceFeed) >= MINIMUM_USD, "Did not send enough ETH!");
         s_addressToAmountFounded[msg.sender] += msg.value;
         s_funders.push(msg.sender);
-        emit Funded(msg.sender, msg.value);
     }
 
     function withdraw() public onlyOwner {
@@ -45,8 +45,8 @@ contract FundMe {
             s_addressToAmountFounded[funder] = 0;
         }
         s_funders = new address[](0);
-        (bool callSuccess,) = payable(msg.sender).call{value: address(this).balance}("");
-        require(callSuccess, "Call failed.");
+        (bool success,) = i_owner.call{value: address(this).balance}("");
+        require(success);
     }
 
     receive() external payable {
