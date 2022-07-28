@@ -7,45 +7,44 @@ import "./PriceConverter.sol";
 /// @title Funding Contract
 /// @author mektigboy
 /// @notice Create a sample funding contract.
-/// @dev Implements price feeds as out library.
+/// @dev Implements price feeds as our library.
 
 contract FundMe {
     using PriceConverter for uint256;
 
-    
-    address[] public funders;
-    mapping(address => uint256) public addressToAmountFounded;
-    address public owner;
     uint256 public constant MINIMUM_USD = 50 * 1e18;
-    AggregatorV3Interface public priceFeed;
+    address public immutable i_owner;
+    address[] private s_funders;
+    mapping(address => uint256) private s_addressToAmountFounded;
+    AggregatorV3Interface private priceFeed;
 
-    event Funded();
     error NotOwner();
-    constructor(address priceFeedAddress) {
-        owner = msg.sender;
-        priceFeed = AggregatorV3Interface(priceFeedAddress);
-    }
 
     modifier onlyOwner() {
-        if (msg.sender != owner) {
+        if (msg.sender != i_owner) {
             revert NotOwner();
         }
         _;
     }
 
+    constructor(address priceFeedAddress) {
+        i_owner = msg.sender;
+        priceFeed = AggregatorV3Interface(priceFeedAddress);
+    }
+
     function fund() public payable {
         require(msg.value.getConvertionRate(priceFeed) >= MINIMUM_USD, "Did not send enough!");
-        addressToAmountFounded[msg.sender] += msg.value;
-        funders.push(msg.sender);
+        s_addressToAmountFounded[msg.sender] += msg.value;
+        s_funders.push(msg.sender);
         emit Funded(msg.sender, msg.value);
     }
 
     function withdraw() public onlyOwner {
-        for (uint256 funderIndex = 0; funderIndex < funders.length; funderIndex++) {
-            address funder = funders[funderIndex];
-            addressToAmountFounded[funder] = 0;
+        for (uint256 funderIndex = 0; funderIndex < s_funders.length; funderIndex++) {
+            address funder = s_funders[funderIndex];
+            s_addressToAmountFounded[funder] = 0;
         }
-        funders = new address[](0);
+        s_funders = new address[](0);
         (bool callSuccess,) = payable(msg.sender).call{value: address(this).balance}("");
         require(callSuccess, "Call failed.");
     }
