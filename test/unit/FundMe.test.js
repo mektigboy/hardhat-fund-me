@@ -106,6 +106,22 @@ describe("FundMe", async function () {
                 startingFundMeBalance.add(startingDeployerBalance).toString(),
                 endingDeployerBalance.add(gasCost).toString()
             );
+            // Make sure that the funders are reset properly.
+            await expect(fundMe.funders(0)).to.be.reverted;
+            for (let i = 1; i < 6; i++) {
+                assert.equal(
+                    await fundMe.s_addressToAmountFounded(accounts[i].address),
+                    0
+                );
+            }
+        });
+        it("Only allows the owner to withdraw", async function () {
+            const accounts = await ethers.getSigners();
+            const attacker = accounts[1];
+            const attackerConnectedContract = await fundMe.connect(attacker);
+            await expect(
+                attackerConnectedContract.withdraw()
+            ).to.be.revertedWith("FundMe__NotOwner");
         });
     });
 });
