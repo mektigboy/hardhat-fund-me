@@ -14,10 +14,10 @@ contract FundMe {
     using PriceConverter for uint256;
 
     uint256 public constant MINIMUM_USD = 50 * 1e18;
-    address private immutable i_owner;
-    address[] private s_funders; // Should be <private>, changed it to <public> for testing puroposes.
-    mapping(address => uint256) private s_addressToAmountFunded; // Should be <private>, changed it to <public> for testing puroposes.
-    AggregatorV3Interface private s_priceFeed; // Should be <private>, changed it to <public> for testing puroposes.
+    address public immutable i_owner;
+    address[] public s_funders; // Should be <private>, changed it to <public> for testing puroposes.
+    mapping(address => uint256) public s_addressToAmountFunded; // Should be <private>, changed it to <public> for testing puroposes.
+    AggregatorV3Interface public s_priceFeed; // Should be <private>, changed it to <public> for testing puroposes.
 
     modifier onlyOwner() {
         if (msg.sender != i_owner) revert FundMe__NotOwner();
@@ -72,7 +72,7 @@ contract FundMe {
             s_addressToAmountFunded[funder] = 0;
         }
         s_funders = new address[](0);
-        (bool success,) = i_owner.call{value: address(this).balance}("");
+        (bool success, ) = i_owner.call{value: address(this).balance}("");
         require(success);
     }
 }
