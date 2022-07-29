@@ -20,7 +20,7 @@ describe("FundMe", async function () {
 
     describe("constructor", async function () {
         it("Sets the agregator addresses correctly", async function () {
-            const response = await fundMe.s_priceFeed(); // This function is originally marked as <private>, changed it to <public> for testing purposes.
+            const response = await fundMe.getPriceFeed();
             assert.equal(response, mockV3Aggregator.address);
         });
     });
@@ -34,13 +34,13 @@ describe("FundMe", async function () {
 
         it("Updated the amount funded data structure", async function () {
             await fundMe.fund({ value: sendValue });
-            const response = await fundMe.s_addressToAmountFunded(deployer); // This function is originally marked as <private>, changed it to <public> for testing purposes.
+            const response = await fundMe.getAddressToAmountFunded(deployer);
             assert.equal(response.toString(), sendValue.toString());
         });
 
         it("Adds funder to array to funders", async function () {
             await fundMe.fund({ value: sendValue });
-            const funder = await fundMe.s_funders(0); // This function is originally marked as <private>, changed it to <public> for testing purposes.
+            const funder = await fundMe.getFunder(0);
             assert.equal(funder, deployer);
         });
     });
@@ -137,10 +137,10 @@ describe("FundMe", async function () {
                 endingDeployerBalance.add(gasCost).toString()
             );
             // Make sure that the funders are reset properly.
-            await expect(fundMe.s_funders(0)).to.be.reverted;
+            await expect(fundMe.getFunder(0)).to.be.reverted;
             for (let i = 1; i < 6; i++) {
                 assert.equal(
-                    await fundMe.s_addressToAmountFunded(accounts[i].address),
+                    await fundMe.getAddressToAmountFunded(accounts[i].address),
                     0
                 );
             }
@@ -188,10 +188,10 @@ describe("FundMe", async function () {
                 endingDeployerBalance.add(gasCost).toString()
             );
             // Make sure that the funders are reset properly.
-            await expect(fundMe.s_funders(0)).to.be.reverted;
+            await expect(fundMe.getFunder(0)).to.be.reverted;
             for (let i = 1; i < 6; i++) {
                 assert.equal(
-                    await fundMe.s_addressToAmountFunded(accounts[i].address),
+                    await fundMe.getAddressToAmountFunded(accounts[i].address),
                     0
                 );
             }
