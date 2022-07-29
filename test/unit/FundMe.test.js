@@ -57,8 +57,32 @@ describe("FundMe", async function () {
                 deployer
             );
             // Act:
-
+            const transactionResponse = await fundMe.withdraw();
+            const transactionReceipt = await transactionResponse.wait(1);
+            const { gasUsed, effectiveGasPrice } = transactionReceipt;
+            const gasCost = gasUsed.mul(effectiveGasPrice);
+            const endingFundMeBalance = await fundMe.provider.getBalance(
+                fundMe.address
+            );
+            const endingDeployerBalance = await fundMe.provider.getBalance(
+                deployer
+            );
             // Assert:
+            assert.equal(endingFundMeBalance, 0);
+            assert.equal(
+                startingFundMeBalance.add(startingDeployerBalance).toString(),
+                endingDeployerBalance.add(gasCost).toString()
+            );
+        });
+        it("Allows us to withdraw with multiple funders", async function () {
+            // Arrange:
+            const accounts = await ethers.getSigners();
+            for (let i = 1; i < 6; i++) {
+                const fundMeConnectedContract = await fundMe.connect(
+                    accounts[1]
+                );
+                await fundMeConnectedContract.fund({ value: sendValue });
+            }
         });
     });
 });
