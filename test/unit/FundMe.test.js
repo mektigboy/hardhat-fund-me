@@ -20,7 +20,7 @@ describe("FundMe", async function () {
 
     describe("constructor", async function () {
         it("Sets the agregator addresses correctly", async function () {
-            const response = await fundMe.priceFeed();
+            const response = await fundMe.s_priceFeed(); // This function is originally marked as <private>, changed it to <public> for testing purposes.
             assert.equal(response, mockV3Aggregator.address);
         });
     });
@@ -33,12 +33,12 @@ describe("FundMe", async function () {
         });
         it("Updated the amount funded data structure", async function () {
             await fundMe.fund({ value: sendValue });
-            const response = await fundMe.addressToAmountFunded(deployer);
+            const response = await fundMe.s_addressToAmountFounded(deployer); // This function is originally marked as <private>, changed it to <public> for testing purposes.
             assert.equal(response.toString(), sendValue.toString());
         });
         it("Adds funder to array to funders", async function () {
             await fundMe.fund({ value: sendValue });
-            const funder = await fundMe.funders(0);
+            const funder = await fundMe.s_funders(0); // This function is originally marked as <private>, changed it to <public> for testing purposes.
             assert.equal(funder, deployer);
         });
     });

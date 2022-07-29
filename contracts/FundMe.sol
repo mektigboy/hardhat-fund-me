@@ -15,9 +15,9 @@ contract FundMe {
 
     uint256 public constant MINIMUM_USD = 50 * 1e18;
     address public immutable i_owner;
-    address[] private s_funders;
-    mapping(address => uint256) private s_addressToAmountFounded;
-    AggregatorV3Interface private s_priceFeed;
+    address[] private s_funders; // Should be <private>, changed it to <public> for testing puroposes.
+    mapping(address => uint256) private s_addressToAmountFounded; // Should be <private>, changed it to <public> for testing puroposes.
+    AggregatorV3Interface private s_priceFeed; // Should be <private>, changed it to <public> for testing puroposes.
 
     modifier onlyOwner() {
         if (msg.sender != i_owner) {
