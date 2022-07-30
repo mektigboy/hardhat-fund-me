@@ -79,18 +79,10 @@
     "ast": {
         "absolutePath": "/home/user/Documents/Learn Blockchain Projects/hardhat-fund-me/contracts/FundMe.sol",
         "exportedSymbols": {
-            "AggregatorV3Interface": [
-                258
-            ],
-            "FundMe": [
-                158
-            ],
-            "FundMe__NotOwner": [
-                5
-            ],
-            "PriceConverter": [
-                212
-            ]
+            "AggregatorV3Interface": [258],
+            "FundMe": [158],
+            "FundMe__NotOwner": [5],
+            "PriceConverter": [212]
         },
         "id": 159,
         "license": "MIT",
@@ -98,12 +90,7 @@
         "nodes": [
             {
                 "id": 1,
-                "literals": [
-                    "solidity",
-                    "^",
-                    "0.8",
-                    ".15"
-                ],
+                "literals": ["solidity", "^", "0.8", ".15"],
                 "nodeType": "PragmaDirective",
                 "src": "32:24:0"
             },
@@ -159,9 +146,7 @@
                 },
                 "fullyImplemented": true,
                 "id": 158,
-                "linearizedBaseContracts": [
-                    158
-                ],
+                "linearizedBaseContracts": [158],
                 "name": "FundMe",
                 "nameLocation": "423:6:0",
                 "nodeType": "ContractDefinition",
@@ -1025,8 +1010,7 @@
                                             "name": "require",
                                             "nodeType": "Identifier",
                                             "overloadedDeclarations": [
-                                                4294967278,
-                                                4294967278
+                                                4294967278, 4294967278
                                             ],
                                             "referencedDeclaration": 4294967278,
                                             "src": "1181:7:0",
@@ -1278,9 +1262,7 @@
                                         "src": "1505:114:0",
                                         "statements": [
                                             {
-                                                "assignments": [
-                                                    118
-                                                ],
+                                                "assignments": [118],
                                                 "declarations": [
                                                     {
                                                         "constant": false,
@@ -1484,9 +1466,7 @@
                                     },
                                     "id": 130,
                                     "initializationExpression": {
-                                        "assignments": [
-                                            107
-                                        ],
+                                        "assignments": [107],
                                         "declarations": [
                                             {
                                                 "constant": false,
@@ -1676,10 +1656,7 @@
                                     "src": "1628:28:0"
                                 },
                                 {
-                                    "assignments": [
-                                        140,
-                                        null
-                                    ],
+                                    "assignments": [140, null],
                                     "declarations": [
                                         {
                                             "constant": false,
@@ -1774,9 +1751,7 @@
                                             "isLValue": false,
                                             "isPure": false,
                                             "lValueRequested": false,
-                                            "names": [
-                                                "value"
-                                            ],
+                                            "names": ["value"],
                                             "nodeType": "FunctionCallOptions",
                                             "options": [
                                                 {
@@ -1901,8 +1876,7 @@
                                             "name": "require",
                                             "nodeType": "Identifier",
                                             "overloadedDeclarations": [
-                                                4294967278,
-                                                4294967278
+                                                4294967278, 4294967278
                                             ],
                                             "referencedDeclaration": 4294967278,
                                             "src": "1740:7:0",
@@ -1975,9 +1949,7 @@
                 ],
                 "scope": 159,
                 "src": "414:1351:0",
-                "usedErrors": [
-                    5
-                ]
+                "usedErrors": [5]
             }
         ],
         "src": "32:1734:0"
