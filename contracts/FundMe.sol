@@ -8,7 +8,7 @@ error FundMe__NotOwner();
 
 /// @title Funding Contract
 /// @author mektigboy
-/// @notice Create a sample funding contract.
+/// @notice Creates a sample funding contract.
 /// @dev Implements price feeds as our library.
 contract FundMe {
     using PriceConverter for uint256;
